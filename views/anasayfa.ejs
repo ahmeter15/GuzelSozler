@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Güzel Sözler</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+  </head>
+  <body class="bg-light">
+    <div class="container pl-5 pr-5 ">
+      <h3 class="text-center p-5">Güzel Sözler</h3>
+      <% for(var i = 0 ; i < sozler.length ; i++){ %>
+        <div class="alert alert-warning" role="alert">
+          <%= sozler[i].icerik %> - <%= sozler[i].kategori %>
+        </div>
+      <% } %>
+    </div>
+  </body>
+</html>
