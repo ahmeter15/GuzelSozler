@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
+const https = require("https");
+
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({
   extended: true
@@ -61,6 +63,7 @@ app.route("/api/guzelsoz/:id")
         res.send({sonuc : "Şifre hatalı."});
       }
     });
+
 app.route("/api/guzelsozler")
     .get(function(req, res){
       GuzelSoz.find({}, function(err, gelenVeri){
@@ -95,6 +98,47 @@ app.route("/api/guzelsozler")
         res.send({sonuc : "Şifre hatalı."});
       }
     });
+
+
+
+app.get("/admin" , function(req,res){
+
+  var link = "https://guzelsozler15.herokuapp.com/api/guzelsozler";
+  https.get(link, function(response){
+    response.on("data", function(gelenGuzelSozler){
+      var gelenSozler = JSON.parse(gelenGuzelSozler);
+      res.render("admin", {sozler : gelenSozler})
+    });
+  });
+});
+
+
+
+
+
+app.post("/kayit-sil", function(req, res){
+    var id = req.body._id;
+    var link = "https://guzelsozler15.herokuapp.com/api/guzelsoz/"+id;
+    const gonderilecekler = JSON.stringify({
+      sifre: "parola1234"
+    })
+    const secenekler = {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json',
+        'Content-Length': gonderilecekler.length
+      }
+    }
+    const baglanti = https.request(link, secenekler, function(response) {
+      response.on('data', function(gelenVeri) {
+        var sonuc = JSON.parse(gelenVeri);
+        res.send(sonuc);
+      })
+    })
+    baglanti.write(gonderilecekler);
+    baglanti.end();
+});
+
 let port = process.env.PORT;
 if(port == "" || port == null){
   port = 5000;
